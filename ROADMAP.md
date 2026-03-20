@@ -81,16 +81,6 @@ Codex creates a semantic slide spec.
 Output:
 - `slide_spec.json`
 
-Shape:
-- title
-- kicker
-- hero
-- cards
-- callout
-- comparison
-- quote
-- chart slot
-
 ### 3. Layout engine
 
 Use an actual layout solver instead of hardcoding positions.
@@ -99,40 +89,16 @@ Best starting point:
 - `Yoga`
 
 Possible later addition:
-- `Kiwi` / Cassowary constraints
-
-Output:
-- solved frames for all elements
+- `Kiwi`
 
 ### 4. Renderer
 
 Move long-term rendering to:
 - `PptxGenJS`
 
-Keep Python only where it still helps:
+Keep Python where it still helps:
 - extraction
-- deck inspection
-
-## Open-source building blocks
-
-Best candidates:
-
-- `gitbrent/PptxGenJS`
-  - strong PPT generation layer
-- `scanny/python-pptx`
-  - extraction / inspection
-- `GongRzhe/Office-PowerPoint-MCP-Server`
-  - reference for MCP-native PowerPoint operations
-- `facebook/yoga`
-  - layout solving
-- `nucleic/kiwi`
-  - constraint solving
-- `zarazhangrui/frontend-slides`
-  - right product shape: content-first, preview-first
-- `slidevjs/slidev`
-  - useful authoring/theme ideas
-- `marp-team/marp-cli`
-  - useful content-to-slides pipeline ideas
+- inspection
 
 ## Build order
 
@@ -155,15 +121,3 @@ Best candidates:
 
 - evaluate `PptxGenJS` renderer migration
 - stop hand-editing PPT XML for new layouts
-
-## Product boundary
-
-Do build:
-- slide generation
-- variant selection
-- export
-
-Do not build yet:
-- canvas editor
-- drag handles
-- full WYSIWYG design tool

@@ -30,6 +30,14 @@ This returns:
 - slide archetypes
 - per-slide text content + geometry
 
+Clean design-system JSON:
+
+```bash
+python3 scripts/extract_design_system.py \
+  --pptx <deck.pptx> \
+  --output /tmp/design_system.json
+```
+
 ### Make one new slide
 
 ```bash
@@ -57,8 +65,27 @@ This keeps iterating on the working draft and also copies a named final export.
 
 If the user gives a plain-English brief, Codex should:
 1. inspect the deck
-2. write a small `slide.json`
+2. write a small `slide.json` that follows `assets/slide_spec.schema.json`
 3. call `make_slide.py`
+
+### Generate variants
+
+```bash
+python3 scripts/generate_variants.py \
+  --pptx <deck.pptx> \
+  --content-json <slide.json> \
+  --output /tmp/variants.json
+```
+
+This creates 2-3 safe variants from different native archetypes when possible.
+
+### Variant board
+
+```bash
+python3 scripts/variant_board.py \
+  --manifest /tmp/variants.json \
+  --output /tmp/variant-board.html
+```
 
 ### Preview one slide
 
@@ -130,14 +157,17 @@ Minimal example:
 - preview before trust
 - keep outputs repo-local in `.pptx-work/`
 - one working draft; no version spam unless asked
+- variant board, not full canvas editor
 - Codex plans the content; scripts render it
-- next product step: variant board, not full canvas editor
 
 ## Internal Scripts
 
 Most files in `scripts/` are internal helpers. Normal use should only need:
 - `inspect_pptx.py`
+- `extract_design_system.py`
 - `make_slide.py`
+- `generate_variants.py`
+- `variant_board.py`
 - `preview_slide.py`
 - `export_final.py`
 - `clean_workdir.py`

@@ -1,59 +1,57 @@
 # PowerPoint Deck Skill
 
-Codex skill for two jobs:
+Keep it simple.
 
-1. inspect an existing PowerPoint deck
-2. add a new slide in the same design system
+Use this skill to:
 
-The model handles content and structure.
-The scripts handle rendering, fitting, preview, and export.
+1. inspect a PowerPoint deck
+2. generate new slides in the same design system
+3. compare 2-3 strong variants
+4. export one final PPTX
 
-## Current workflow
+## Core flow
 
-Inspect:
-
-```bash
-python3 scripts/inspect_pptx.py --pptx /path/to/deck.pptx --format json
-```
-
-Iterate on one working draft:
+Extract design system:
 
 ```bash
-python3 scripts/make_slide.py --pptx /path/to/deck.pptx --content-json /tmp/slide.json
+python3 scripts/extract_design_system.py \
+  --pptx /path/to/deck.pptx \
+  --output /tmp/design_system.json
 ```
 
-Preview current draft:
+Write a `slide.json` that follows:
+
+- `assets/slide_spec.schema.json`
+
+Generate one slide:
 
 ```bash
-python3 scripts/preview_slide.py --pptx /path/to/deck.pptx --slide 12
+python3 scripts/make_slide.py \
+  --pptx /path/to/deck.pptx \
+  --content-json /tmp/slide.json
 ```
 
-Export final only when approved:
+Generate variants:
 
 ```bash
-python3 scripts/export_final.py --pptx /path/to/deck.pptx --name final-name
+python3 scripts/generate_variants.py \
+  --pptx /path/to/deck.pptx \
+  --content-json /tmp/slide.json \
+  --output /tmp/variants.json
 ```
 
-Clean artifacts:
+Build variant board:
 
 ```bash
-python3 scripts/clean_workdir.py --pptx /path/to/deck.pptx
+python3 scripts/variant_board.py \
+  --manifest /tmp/variants.json \
+  --output /tmp/variant-board.html
 ```
 
-## Working files
+Export final:
 
-- draft: `.pptx-work/out/<deck>/current.pptx`
-- previews: `.pptx-work/previews/<deck>/current/`
-- named exports: `.pptx-work/out/<deck>/<name>.pptx`
-
-## Near-term direction
-
-The next step is not a full editor.
-It is a lightweight variant board:
-
-- generate 2–3 slide variants
-- render them side by side
-- pick one
-- export only the chosen version
-
-That keeps the skill simple while improving design quality.
+```bash
+python3 scripts/export_final.py \
+  --pptx /path/to/deck.pptx \
+  --name final-name
+```

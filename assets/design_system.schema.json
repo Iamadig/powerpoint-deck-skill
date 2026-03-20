@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iamadig.github.io/powerpoint-deck-skill/design_system.schema.json",
+  "title": "DesignSystem",
+  "type": "object",
+  "required": ["source_pptx", "canvas", "tokens", "archetypes"],
+  "properties": {
+    "source_pptx": { "type": "string" },
+    "canvas": {
+      "type": "object",
+      "required": ["cx", "cy", "width_pt", "height_pt"],
+      "properties": {
+        "cx": { "type": "integer" },
+        "cy": { "type": "integer" },
+        "width_pt": { "type": "number" },
+        "height_pt": { "type": "number" }
+      }
+    },
+    "tokens": {
+      "type": "object",
+      "required": ["colors", "font_sizes_pt", "x_bands", "y_bands"],
+      "properties": {
+        "colors": {
+          "type": "object",
+          "required": ["text", "fill"],
+          "properties": {
+            "text": { "type": "array", "items": { "type": "string" } },
+            "fill": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "font_sizes_pt": { "type": "array", "items": { "type": "number" } },
+        "x_bands": { "type": "array", "items": { "type": "integer" } },
+        "y_bands": { "type": "array", "items": { "type": "integer" } }
+      }
+    },
+    "archetypes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "count", "slides"],
+        "properties": {
+          "name": { "type": "string" },
+          "count": { "type": "integer" },
+          "slides": { "type": "array", "items": { "type": "integer" } }
+        }
+      }
+    }
+  }
+}

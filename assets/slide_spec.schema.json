@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iamadig.github.io/powerpoint-deck-skill/slide_spec.schema.json",
+  "title": "SlideSpec",
+  "type": "object",
+  "required": ["intent", "section_label", "title"],
+  "properties": {
+    "intent": { "type": "string" },
+    "section_label": { "type": "string" },
+    "title": { "type": "string" },
+    "subtitle": { "type": "string" },
+    "lead": { "type": "string" },
+    "footer": { "type": "string" },
+    "hide_footer": { "type": "boolean" },
+    "cards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title"],
+        "properties": {
+          "eyebrow": { "type": "string" },
+          "title": { "type": "string" },
+          "body": { "type": "string" },
+          "meta": { "type": "string" }
+        }
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "properties": {
+        "prefer_native_archetypes": { "type": "boolean" },
+        "max_variants": { "type": "integer", "minimum": 1, "maximum": 6 }
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iamadig.github.io/powerpoint-deck-skill/variant_result.schema.json",
+  "title": "VariantResult",
+  "type": "object",
+  "required": ["source_pptx", "variants"],
+  "properties": {
+    "source_pptx": { "type": "string" },
+    "variants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "deck", "preview"],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "deck": { "type": "string" },
+          "preview": { "type": "string" },
+          "source_slide": { "type": ["integer", "null"] },
+          "archetype": { "type": ["string", "null"] },
+          "notes": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}
