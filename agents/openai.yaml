@@ -1,0 +1,4 @@
+interface:
+  display_name: "PowerPoint Deck"
+  short_description: "Deconstruct and rebuild PPTX decks"
+  default_prompt: "Use $powerpoint-deck to analyze a PowerPoint deck and create new slides that match its design system."
