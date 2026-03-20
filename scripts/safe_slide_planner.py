@@ -26,6 +26,7 @@ class ContentSpec:
     subtitle: str = ""
     lead: str = ""
     footer: str = ""
+    hide_footer: bool = False
     cards: list[ContentCard] | None = None
 
 
@@ -77,6 +78,7 @@ def load_content_spec(path: Path) -> ContentSpec:
         subtitle=payload.get("subtitle", ""),
         lead=payload.get("lead", ""),
         footer=payload.get("footer", ""),
+        hide_footer=bool(payload.get("hide_footer", False)),
         cards=cards,
     )
 

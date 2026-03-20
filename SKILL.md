@@ -18,7 +18,7 @@ The scripts are deterministic.
 ### Extract deck system + content
 
 ```bash
-python3 scripts/inspect_pptx.py \
+python3 .agents/skills/powerpoint-deck/scripts/inspect_pptx.py \
   --pptx <deck.pptx> \
   --format json
 ```
@@ -33,7 +33,7 @@ This returns:
 ### Make one new slide
 
 ```bash
-python3 scripts/make_slide.py \
+python3 .agents/skills/powerpoint-deck/scripts/make_slide.py \
   --pptx <deck.pptx> \
   --content-json <slide.json>
 ```
@@ -41,8 +41,19 @@ python3 scripts/make_slide.py \
 This:
 - finds a safe existing slide pattern when possible
 - otherwise synthesizes a 4-card slide when the payload fits that shape
-- writes the revised deck to `.pptx-work/out/`
-- exports a preview PNG to `.pptx-work/previews/`
+- updates one working draft at `.pptx-work/out/<deck>/current.pptx`
+- overwrites the latest preview at `.pptx-work/previews/<deck>/current/`
+
+Optional:
+
+```bash
+python3 .agents/skills/powerpoint-deck/scripts/make_slide.py \
+  --pptx <deck.pptx> \
+  --content-json <slide.json> \
+  --save-as final-name
+```
+
+This keeps iterating on the working draft and also copies a named final export.
 
 If the user gives a plain-English brief, Codex should:
 1. inspect the deck
@@ -52,9 +63,26 @@ If the user gives a plain-English brief, Codex should:
 ### Preview one slide
 
 ```bash
-python3 scripts/preview_slide.py \
+python3 .agents/skills/powerpoint-deck/scripts/preview_slide.py \
   --pptx <deck.pptx> \
   --slide <n>
+```
+
+If a working draft exists, preview uses that by default.
+
+### Export final
+
+```bash
+python3 .agents/skills/powerpoint-deck/scripts/export_final.py \
+  --pptx <deck.pptx> \
+  --name final-name
+```
+
+### Clean artifacts
+
+```bash
+python3 .agents/skills/powerpoint-deck/scripts/clean_workdir.py \
+  --pptx <deck.pptx>
 ```
 
 ## Content JSON
@@ -101,6 +129,7 @@ Minimal example:
 - no forced fit
 - preview before trust
 - keep outputs repo-local in `.pptx-work/`
+- one working draft; no version spam unless asked
 - Codex plans the content; scripts render it
 
 ## Internal Scripts
@@ -109,3 +138,5 @@ Most files in `scripts/` are internal helpers. Normal use should only need:
 - `inspect_pptx.py`
 - `make_slide.py`
 - `preview_slide.py`
+- `export_final.py`
+- `clean_workdir.py`

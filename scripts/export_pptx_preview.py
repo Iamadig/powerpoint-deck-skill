@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import fcntl
+import re
 import shutil
 import subprocess
 import time
@@ -11,6 +12,28 @@ from pathlib import Path
 
 def default_work_root() -> Path:
     return Path.cwd() / ".pptx-work"
+
+
+def deck_key(pptx: Path) -> str:
+    stem = re.sub(r"[^A-Za-z0-9._-]+", "-", pptx.stem).strip("-")
+    return stem or "deck"
+
+
+def current_draft_path(pptx: Path) -> Path:
+    return default_work_root() / "out" / deck_key(pptx) / "current.pptx"
+
+
+def current_preview_dir(pptx: Path) -> Path:
+    return default_work_root() / "previews" / deck_key(pptx) / "current"
+
+
+def named_export_path(pptx: Path, name: str) -> Path:
+    filename = name if name.endswith(".pptx") else f"{name}.pptx"
+    return default_work_root() / "out" / deck_key(pptx) / filename
+
+
+def cached_pdf_path(pptx: Path) -> Path:
+    return default_work_root() / "cache" / f"{deck_key(pptx)}.pdf"
 
 
 def parse_slides(value: str | None) -> list[int]:
@@ -88,6 +111,8 @@ def rasterize_pdf(
     if pdftoppm is None:
         raise SystemExit("pdftoppm not found; install poppler to rasterize PDF previews")
     output_dir.mkdir(parents=True, exist_ok=True)
+    for old in output_dir.glob(f"{prefix}*.png"):
+        old.unlink()
     targets = slides or []
     rendered: list[Path] = []
     if not targets:
@@ -127,10 +152,10 @@ def export_preview_images(
     pdf_out: Path | None = None,
 ) -> tuple[Path, list[Path]]:
     if output_dir is None:
-        output_dir = default_work_root() / "previews" / pptx.stem
+        output_dir = current_preview_dir(pptx)
     cache_mode = pdf_out is None
     if pdf_out is None:
-        pdf_out = default_work_root() / "cache" / f"{pptx.stem}.pdf"
+        pdf_out = cached_pdf_path(pptx)
     pdf_out.parent.mkdir(parents=True, exist_ok=True)
     if pdf_out.exists() and pdf_out.stat().st_mtime >= pptx.stat().st_mtime and pdf_out.stat().st_size > 0:
         pdf_path = pdf_out

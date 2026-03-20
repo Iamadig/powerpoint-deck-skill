@@ -116,10 +116,23 @@ def set_shape_text(sp: ET.Element, text: str) -> None:
         node.text = ""
 
 
+def move_shape_off_canvas(sp: ET.Element) -> None:
+    xfrm = sp.find("p:spPr/a:xfrm", NS)
+    if xfrm is None:
+        return
+    off = xfrm.find("a:off", NS)
+    if off is None:
+        return
+    off.set("x", "20000000")
+    off.set("y", "20000000")
+
+
 def apply_assignments_to_slide_xml(
     xml_bytes: bytes,
     assignments: list[tuple[ShapeSlot, str]],
     all_slots: list[ShapeSlot],
+    *,
+    hide_footer: bool = False,
 ) -> bytes:
     root = ET.fromstring(xml_bytes)
     by_id = {slot.shape_id: text for slot, text in assignments}
@@ -133,6 +146,13 @@ def apply_assignments_to_slide_xml(
             set_shape_text(sp, by_id[shape_id])
         elif shape_id in managed_ids:
             set_shape_text(sp, "")
+        if hide_footer:
+            xfrm = sp.find("p:spPr/a:xfrm", NS)
+            if xfrm is not None:
+                off = xfrm.find("a:off", NS)
+                if off is not None and int(off.get("y", "0")) >= 5900000:
+                    set_shape_text(sp, "")
+                    move_shape_off_canvas(sp)
     return ET.tostring(root, encoding="utf-8", xml_declaration=True)
 
 
@@ -165,7 +185,12 @@ def compose_deck(
     with ZipFile(output, "w", ZIP_DEFLATED) as dst:
         for item, data in items:
             if item.filename == target_part:
-                data = apply_assignments_to_slide_xml(data, assignments, slots)
+                data = apply_assignments_to_slide_xml(
+                    data,
+                    assignments,
+                    slots,
+                    hide_footer=spec.hide_footer,
+                )
             dst.writestr(item, data)
     return plan, assignments
 
