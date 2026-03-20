@@ -1,68 +1,59 @@
-# powerpoint-deck
+# PowerPoint Deck Skill
 
 Codex skill for two jobs:
 
 1. inspect an existing PowerPoint deck
 2. add a new slide in the same design system
 
-Public entrypoints:
+The model handles content and structure.
+The scripts handle rendering, fitting, preview, and export.
 
-- `scripts/inspect_pptx.py`
-- `scripts/make_slide.py`
-- `scripts/preview_slide.py`
+## Current workflow
 
-## Quickstart
-
-Extract deck system + content:
+Inspect:
 
 ```bash
 python3 scripts/inspect_pptx.py --pptx /path/to/deck.pptx --format json
 ```
 
-Make a new slide:
+Iterate on one working draft:
 
 ```bash
 python3 scripts/make_slide.py --pptx /path/to/deck.pptx --content-json /tmp/slide.json
 ```
 
-Preview one slide:
+Preview current draft:
 
 ```bash
-python3 scripts/preview_slide.py --pptx /path/to/deck.pptx --slide 5
+python3 scripts/preview_slide.py --pptx /path/to/deck.pptx --slide 12
 ```
 
-## Content JSON
+Export final only when approved:
 
-```json
-{
-  "title": "Who Feels This First",
-  "section_label": "09 / Customer Segments",
-  "hide_banner": true,
-  "cards": [
-    {
-      "title": "Solo Developers",
-      "quote": "I keep re-explaining the same project.",
-      "pain": "Pain: context decays between sessions",
-      "value": "Value: the next agent inherits context"
-    },
-    {
-      "title": "Small Teams (2-5)",
-      "quote": "We ship fast, but nobody knows why.",
-      "pain": "Pain: coordination overhead",
-      "value": "Value: handoffs + decision trails"
-    },
-    {
-      "title": "Engineering Leads",
-      "quote": "I need to understand why, not just what.",
-      "pain": "Pain: invisible decisions",
-      "value": "Value: auditable reasoning"
-    },
-    {
-      "title": "Tool Builders",
-      "quote": "I want memory without vendor lock-in.",
-      "pain": "Pain: vendor lock-in",
-      "value": "Value: git-native + protocol-level"
-    }
-  ]
-}
+```bash
+python3 scripts/export_final.py --pptx /path/to/deck.pptx --name final-name
 ```
+
+Clean artifacts:
+
+```bash
+python3 scripts/clean_workdir.py --pptx /path/to/deck.pptx
+```
+
+## Working files
+
+- draft: `.pptx-work/out/<deck>/current.pptx`
+- previews: `.pptx-work/previews/<deck>/current/`
+- named exports: `.pptx-work/out/<deck>/<name>.pptx`
+
+## Near-term direction
+
+The next step is not a full editor.
+It is a lightweight variant board:
+
+- generate 2–3 slide variants
+- render them side by side
+- pick one
+- export only the chosen version
+
+That keeps the skill simple while improving design quality.

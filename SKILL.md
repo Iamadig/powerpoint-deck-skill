@@ -131,6 +131,7 @@ Minimal example:
 - keep outputs repo-local in `.pptx-work/`
 - one working draft; no version spam unless asked
 - Codex plans the content; scripts render it
+- next product step: variant board, not full canvas editor
 
 ## Internal Scripts
 
