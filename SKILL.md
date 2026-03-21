@@ -15,11 +15,16 @@ The scripts are deterministic.
 
 ## Commands
 
+Install once if needed:
+
+```bash
+pip install -e .
+```
+
 ### Extract deck system + content
 
 ```bash
-python3 .agents/skills/powerpoint-deck/scripts/inspect_pptx.py \
-  --pptx <deck.pptx> \
+pptx-skill inspect <deck.pptx> \
   --format json
 ```
 
@@ -33,35 +38,50 @@ This returns:
 Clean design-system JSON:
 
 ```bash
-python3 scripts/extract_design_system.py \
-  --pptx <deck.pptx> \
+pptx-skill design-system <deck.pptx> \
   --output /tmp/design_system.json
 ```
 
 ### Make one new slide
 
 ```bash
-python3 .agents/skills/powerpoint-deck/scripts/make_slide.py \
-  --pptx <deck.pptx> \
+pptx-skill make <deck.pptx> \
   --content-json <slide.json>
 ```
 
 This:
-- finds a safe existing slide pattern when possible
-- otherwise synthesizes a 4-card slide when the payload fits that shape
-- updates one working draft at `.pptx-work/out/<deck>/current.pptx`
-- overwrites the latest preview at `.pptx-work/previews/<deck>/current/`
+- generates options first
+- writes a variant manifest at `.pptx-work/variants/<deck>/variants.json`
+- writes a board at `.pptx-work/variants/<deck>/board.html`
+- recommends one variant
+- does not update the working draft yet
 
 Optional:
 
 ```bash
-python3 .agents/skills/powerpoint-deck/scripts/make_slide.py \
-  --pptx <deck.pptx> \
+pptx-skill make <deck.pptx> \
   --content-json <slide.json> \
-  --save-as final-name
+  --variant 1
 ```
 
-This keeps iterating on the working draft and also copies a named final export.
+This applies the chosen variant to the working draft.
+
+Or accept the recommendation:
+
+```bash
+pptx-skill make <deck.pptx> \
+  --content-json <slide.json> \
+  --auto
+```
+
+Named export still works:
+
+```bash
+pptx-skill make <deck.pptx> \
+  --content-json <slide.json> \
+  --auto \
+  --save-as final-name
+```
 
 If the user gives a plain-English brief, Codex should:
 1. inspect the deck
@@ -71,8 +91,7 @@ If the user gives a plain-English brief, Codex should:
 ### Generate variants
 
 ```bash
-python3 scripts/generate_variants.py \
-  --pptx <deck.pptx> \
+pptx-skill variants <deck.pptx> \
   --content-json <slide.json> \
   --output /tmp/variants.json
 ```
@@ -82,17 +101,7 @@ This creates 2-3 safe variants from different native archetypes when possible.
 ### Variant board
 
 ```bash
-python3 scripts/variant_board.py \
-  --manifest /tmp/variants.json \
-  --output /tmp/variant-board.html
-```
-
-### Preview one slide
-
-```bash
-python3 .agents/skills/powerpoint-deck/scripts/preview_slide.py \
-  --pptx <deck.pptx> \
-  --slide <n>
+pptx-skill preview <deck.pptx> --slide <n>
 ```
 
 If a working draft exists, preview uses that by default.
@@ -100,16 +109,13 @@ If a working draft exists, preview uses that by default.
 ### Export final
 
 ```bash
-python3 .agents/skills/powerpoint-deck/scripts/export_final.py \
-  --pptx <deck.pptx> \
-  --name final-name
+pptx-skill export <deck.pptx> --name final-name
 ```
 
 ### Clean artifacts
 
 ```bash
-python3 .agents/skills/powerpoint-deck/scripts/clean_workdir.py \
-  --pptx <deck.pptx>
+pptx-skill clean <deck.pptx>
 ```
 
 ## Content JSON
@@ -155,6 +161,7 @@ Minimal example:
 - reuse existing archetypes when safe
 - no forced fit
 - preview before trust
+- no silent auto-pick by default
 - keep outputs repo-local in `.pptx-work/`
 - one working draft; no version spam unless asked
 - variant board, not full canvas editor
@@ -163,11 +170,10 @@ Minimal example:
 ## Internal Scripts
 
 Most files in `scripts/` are internal helpers. Normal use should only need:
-- `inspect_pptx.py`
-- `extract_design_system.py`
-- `make_slide.py`
-- `generate_variants.py`
-- `variant_board.py`
-- `preview_slide.py`
-- `export_final.py`
-- `clean_workdir.py`
+- `pptx-skill inspect`
+- `pptx-skill design-system`
+- `pptx-skill make`
+- `pptx-skill variants`
+- `pptx-skill preview`
+- `pptx-skill export`
+- `pptx-skill clean`

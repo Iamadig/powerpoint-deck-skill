@@ -20,6 +20,7 @@ HTML_TEMPLATE = """<!doctype html>
     .grid {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(420px,1fr)); gap:24px; }}
     .card {{ background:#182133; border:1px solid rgba(255,255,255,.1); border-radius:20px; padding:18px; }}
     .label {{ font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:#21c6ff; margin-bottom:10px; }}
+    .recommended {{ display:inline-block; margin-left:10px; padding:4px 8px; border-radius:999px; font-size:11px; letter-spacing:.08em; text-transform:uppercase; background:#14384a; color:#53d7ff; }}
     img {{ width:100%; height:auto; border-radius:12px; display:block; }}
     .meta {{ margin-top:12px; font-size:14px; color:#b7c2d6; }}
     code {{ color:#9de1ff; }}
@@ -27,7 +28,7 @@ HTML_TEMPLATE = """<!doctype html>
 </head>
 <body>
   <h1>Variant Board</h1>
-  <p>Pick one. Keep the workflow simple.</p>
+  <p>{subtitle}</p>
   <div class="grid">
     {cards}
   </div>
@@ -36,7 +37,7 @@ HTML_TEMPLATE = """<!doctype html>
 
 
 CARD_TEMPLATE = """<div class="card">
-  <div class="label">{label}</div>
+  <div class="label">{label}{recommended}</div>
   <img src="{preview}" alt="{label}" />
   <div class="meta">
     archetype: <code>{archetype}</code><br/>
@@ -48,17 +49,21 @@ CARD_TEMPLATE = """<div class="card">
 
 def build_board(manifest: dict[str, object]) -> str:
     cards = []
+    recommended = str(manifest.get("recommended_variant_id") or "")
     for variant in manifest["variants"]:
         cards.append(
             CARD_TEMPLATE.format(
                 label=html.escape(str(variant["label"])),
+                recommended='<span class="recommended">recommended</span>' if variant["id"] == recommended else "",
                 preview=html.escape(str(variant["preview"])),
                 archetype=html.escape(str(variant.get("archetype") or "custom")),
                 source_slide=html.escape(str(variant.get("source_slide") or "-")),
                 deck=html.escape(str(variant["deck"])),
             )
         )
-    return HTML_TEMPLATE.format(cards="\n".join(cards))
+    count = len(manifest["variants"])
+    subtitle = "Pick one. Keep the workflow simple." if count > 1 else "Only one safe option fit this deck. Use it or shorten the content."
+    return HTML_TEMPLATE.format(cards="\n".join(cards), subtitle=html.escape(subtitle))
 
 
 def main() -> None:

@@ -78,7 +78,11 @@ def generate_variants(
                 "notes": [f"derived from slide {source_slide}", f"archetype={archetype}"],
             }
         )
-    return {"source_pptx": str(pptx), "variants": variants}
+    return {
+        "source_pptx": str(pptx),
+        "recommended_variant_id": variants[0]["id"],
+        "variants": variants,
+    }
 
 
 def main() -> None:

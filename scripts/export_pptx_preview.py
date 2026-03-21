@@ -27,6 +27,18 @@ def current_preview_dir(pptx: Path) -> Path:
     return default_work_root() / "previews" / deck_key(pptx) / "current"
 
 
+def variant_work_dir(pptx: Path) -> Path:
+    return default_work_root() / "variants" / deck_key(pptx)
+
+
+def variant_manifest_path(pptx: Path) -> Path:
+    return variant_work_dir(pptx) / "variants.json"
+
+
+def variant_board_path(pptx: Path) -> Path:
+    return variant_work_dir(pptx) / "board.html"
+
+
 def named_export_path(pptx: Path, name: str) -> Path:
     filename = name if name.endswith(".pptx") else f"{name}.pptx"
     return default_work_root() / "out" / deck_key(pptx) / filename
